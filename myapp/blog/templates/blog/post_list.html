@@ -1,0 +1,38 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+    <p>블로그 게시판 첫 화면입니다.</p>
+    <!-- '글작성 화면' 경로 a태그 넣어주기 -->
+    <a href="{% url 'blog:write' %}" class="btn btn-outline-success">글 작성</a>
+    <!-- 조건문 -->
+    <!-- 글이 있을 때 : 테이블 출력-->
+    {% if posts %}
+    <!-- posts views.py에서 context_object_name 선언 -->
+        <table class="table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <td>제목</td>
+                    <td>내용</td>
+                    <td>작성자</td>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <!-- posts 안에 post 순회 -->
+                <!-- ex) pk=post.pk -> 순회를 도는 post를 써줌 -->
+                <tr>
+                    <td><a href="{% url 'blog:detail' pk=post.pk %}" class="btn">{{ post.title }}</a></td>
+                    <td>{{ post.content }}</td>
+                    <td>{{ post.writer }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+    <!-- 글이 없을 때 문구출력 -->
+    <p>작성된 게시물이 없습니다.</p>
+    <!-- if문을 닫아줌 -->
+    {% endif %}
+
+
+{% endblock %}
