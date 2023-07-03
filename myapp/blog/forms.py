@@ -3,13 +3,25 @@ from django import forms
 from .models import Post, Comment, HashTag
 
 # Form : html에 있는 form태그
-# Model Form : model을 사용하는 form
+# forms.Form 일반폼 
+# Model Form : 모델(Model)과 연결된 폼으로 폼을 저장하면 연결된 모델의 데이터를 저장할 수 있는 폼
+# forms.ModelForm
 class PostForm(forms.ModelForm):
     
     class Meta:
-        model = Post
+        model = Post # 사용할 모델
+        # PostForm에서 사용 할 Post 모델의 속성
         fields = ['title', 'content']
-
+        widgets = {
+            'title': forms.TextInput(attrs={'class':'form-control'}),
+            'content': forms.Textarea(attrs={'class': 'form-control', 'rows': 10, 'cols':'35'}),
+        }
+        
+        labels = {
+            'title' : '제목',
+            'content' : '내용',
+        }
+# 즉, PostForm은 Post모델과 연결된 폼이고 Post모델의 title과 content를 사용 한다고 정의
 
 class CommentForm(forms.ModelForm):
     

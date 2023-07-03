@@ -10,7 +10,8 @@
         <!-- views.py Write 클래스에 보내준 form을 이용 -->
         <!-- p형태로 form을 불러오겠다 -->
         {{ form.as_p }}
-        <input type="submit" class="btn btn-outline-success">
+        <!-- PostForm의 객체 폼의 정의한 title, content속성에 해당하는 html코드를 자동으로 생성 -->
+        <input type="submit" value="작성" class="btn btn-outline-success">
 
     </form>
 {% endblock %}

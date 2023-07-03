@@ -3,6 +3,7 @@
 {% block content %}
     <p>블로그 게시판 첫 화면입니다.</p>
     <!-- '글작성 화면' 경로 a태그 넣어주기 -->
+    <!-- get으로 보여주기 때문에 get form이 열릴 것이다. -->
     <a href="{% url 'blog:write' %}" class="btn btn-outline-success">글 작성</a>
     <!-- 조건문 -->
     <!-- 글이 있을 때 : 테이블 출력-->
@@ -13,17 +14,15 @@
                 <tr>
                     <td>제목</td>
                     <td>내용</td>
-                    <td>작성자</td>
                 </tr>
             </thead>
             <tbody>
                 {% for post in posts %}
                 <!-- posts 안에 post 순회 -->
-                <!-- ex) pk=post.pk -> 순회를 도는 post를 써줌 -->
+                <!-- 예를들어 pk=post.pk -> 순회를 도는 post를 써줌 -->
                 <tr>
                     <td><a href="{% url 'blog:detail' pk=post.pk %}" class="btn">{{ post.title }}</a></td>
                     <td>{{ post.content }}</td>
-                    <td>{{ post.writer }}</td>
                 </tr>
                 {% endfor %}
             </tbody>

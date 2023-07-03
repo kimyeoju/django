@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 
+# Auth user
+AUTH_USER_MODEL = 'user.User'
+# 내가 만든 유저로 auth 사용할거야 ! 라고 명시를 해줘야한다
+# 내가 만든 user.(유저의)User모델이다
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 

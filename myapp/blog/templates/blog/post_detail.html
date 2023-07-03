@@ -10,15 +10,16 @@
     </form>
 <!-- '삭제'를 get으로 요청 했을 때 오류가 났는데 이 오류는 post_delete.html을 찾고있기 때문이다. 왜? get은 단순히 조회 목적이기 때문에 url로 '이동'만 한다. get의 요청은 화면을 보여주는 템플릿이 필요한데 템플릿을 지정해주지 않으면 제네릭뷰에서는 post.delete.html로 찾아가게 되고 이 파일이 없으면 오류가 발생 그러니까 post로 보내줘야함 post는 url 불포함 바디에 포함이니까 템플릿이 없어도 오류가 나지 않음!!!!!  -->
     <p>내용 : {{ post.content }}</p>
-    <p>작성자 : {{ post.writer }}</p>
     <p>작성일 : {{ post.created_at }}</p>
     <!-- 왜 a태그로 작성했을까? 수정페이지 자체는 get으로 들어가도 되기 때문에 -->
 
     <!-- 댓글 작성 화면 -->
     <h3>댓글</h3>
     <form action="{% url 'blog:cm-write' pk=post.pk %}" method="post">
+        <!-- 여기서 pk=post.pk는 detailview에서 post_id를 써야하기 때문에  -->
         {% csrf_token %}
         {{ comment_form.content }}
+        <!-- DetailView의 commnet_form.content의 (빈)폼을 만들어줌  -->
         <input type="submit" value="댓글 작성">
     </form>
     <br>
@@ -46,6 +47,7 @@
 <form action="{% url 'blog:tag-write' pk=post.pk %}" method="post">
     {% csrf_token %}
     {{ hashtag_form.name }}
+    <!-- (생성함수)해시태그를 보여주는 함수  -->
     <input type="submit" value="태그 작성">
 </form>
 <br>

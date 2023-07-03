@@ -32,6 +32,7 @@ urlpatterns = [
     
     # 코멘트 삭제
     # comment -> id다 
+    # 코멘트 중에서 어떤 객체를 지워야 할지 정해야 하니까 comment/ <int:pk>
     path("detail/comment/<int:pk>/delete/", views.CommentDelete.as_view(), name='cm-delete'),
     # detail comment 11 삭제
     # 코멘트의 어떤 값을 삭제 할 것인가 ? 
