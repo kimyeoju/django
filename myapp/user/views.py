@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
-from .models import User
+# from .models import User
 from .forms import RegisterForm, LoginForm
 
 
@@ -16,23 +16,26 @@ from .forms import RegisterForm, LoginForm
 class Registration(View):
     # 일반 'view'는 def get/ def post로 나타날 수 있다.
     def get(self, request):
+        if request.user.is_authenticated:
+            return redirect('blog:list')
         # 회원가입 페이지
         # 정보를 입력 할 폼을 보여주어야 한다.
         form = RegisterForm()
         context = {
-            'form':form
-            # 폼이라는 이름으로 폼을 넘겨준다
+            'form':form,
+            'title': 'User'
         }
         return render(request, 'user/user_register.html', context)
+    
     def post(self,request):
         # submit 눌렀을 때 post요청해야한다.
         form = RegisterForm(request.POST)
         if form.is_valid():
-            # 이 폼이 유효할때만 ! 
             user = form.save()
             # 폼의 내용을 저장 해주겠다
             # 로그인한 다음 이동
-            return redirect('blog:list')
+            return redirect('user:login')
+        # 회원가입하고 로그인 페이지로 넘어가기
         
 
 ### Login
@@ -43,7 +46,8 @@ class Login(View):
         
         form = LoginForm()
         context = {
-            'form': form
+            'form': form,
+            'title': 'User'
         }
         return render(request, 'user/user_login.html', context)
     
@@ -51,10 +55,10 @@ class Login(View):
         if request.user.is_authenticated:
             return redirect('blog:list')
         
-        form = LoginForm(request.POST)
+        form = LoginForm(request, request.POST)
         if form.is_valid():
             # cleaned_data로 값을 불러옴
-            email = form.cleaned_data['email']
+            email = form.cleaned_data['username']
             password = form.cleaned_data['password']
             # user가 진짜 있는 유저인지 알려줌
             # username=email에 넣는 것 models.py에서 설정
@@ -66,8 +70,9 @@ class Login(View):
                 return redirect('blog:list')
             
             # if문이 유효하지 않다면(False)라면?
-            form.add_error(None,'아이디가 없습니다.')
+            form.add_error(None, '아이디가 없습니다.')
             # 폼 안에 기본적인 함수 add_error
+            
         context = {
             # 에러가 들어간 폼을 보여주는 것
             'form' : form

@@ -21,6 +21,11 @@ AUTH_USER_MODEL = 'user.User'
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# Login URL
+# '글작성'버튼 눌렀을 때 로그인 페이지를 보여주는 것 
+LOGIN_URL = '/user/login'
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -42,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'blog', # 내가 만든 블로그
     'user', # 내가 만든 user
 ]
@@ -62,6 +68,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [BASE_DIR / "templates"], #myapp/templates
+        # 전체 templates
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

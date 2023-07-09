@@ -8,7 +8,7 @@ urlpatterns = [
     # path(패턴, 매핑) /blog/
     # path("", views.index), # FBV
     # 글 목록 조회
-    path("",views.List.as_view(), name='list'),
+    path("",views.Index.as_view(), name='list'),
     # ""는 /blog/ 메인주소를 나타내는 것과 같음 
     # 위의 views.Index 는 views.py 파일의 Index 함수를 의미
     

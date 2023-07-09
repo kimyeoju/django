@@ -12,14 +12,15 @@ class RegisterForm(UserCreationForm):
     class Meta:
         model = User
         # fields는 사용자에게 입력 받을 항목 (폼)
-        fields = UserCreationForm.Meta.fields + ('email',)
-        
+        fields = ['email']
+        # fields = UserCreationForm.Meta.fields + ('email',)
+        # 필수 부분을 + email까지 해줄 것이다.
 
 class LoginForm(AuthenticationForm):
     
     class Meta:
         model = User
-        # fields = ['email', 'password']
+        fields = ['email', 'password']
         # widgets = {
         #     'email': forms.EmailInput(attrs={'placeholder': 'email'}),
         #     'password': forms.PasswordInput(attrs={'placeholder': 'password'}),

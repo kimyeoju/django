@@ -22,6 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('blog/', include('blog.urls')),
     path('user/', include('user.urls')),
-    # ''아무것도 안쓰면 정말 메인주소가 나옴 http://127.0.0.1:8000/
     path('', views.IndexMain.as_view()),
+    # ''아무것도 안쓰면 정말 메인주소가 나옴 http://127.0.0.1:8000/
 ]

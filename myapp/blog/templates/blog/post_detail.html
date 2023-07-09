@@ -1,25 +1,33 @@
-{% extends 'blog/base.html' %}
+{% extends 'base.html' %}
 
 {% block content %}
-<hr>
-    <h2>제목 : {{ post.title }}</h2>
-    <a href="{% url 'blog:edit' pk=post.pk %}" class="btn">수정</a>
-    <form action="{% url 'blog:delete' pk=post.pk %}" method="post">
+
+    <h2>제목: {{ post_title }}</h2>
+
+    {% if post_writer == request.user %}
+    <a href="{% url 'blog:edit' pk=post_id %}" class="btn">수정</a>
+    <form action="{% url 'blog:delete' pk=post_id %}" method="post">
         {% csrf_token %}
         <input type="submit" value="삭제" class="btn">
     </form>
-<!-- '삭제'를 get으로 요청 했을 때 오류가 났는데 이 오류는 post_delete.html을 찾고있기 때문이다. 왜? get은 단순히 조회 목적이기 때문에 url로 '이동'만 한다. get의 요청은 화면을 보여주는 템플릿이 필요한데 템플릿을 지정해주지 않으면 제네릭뷰에서는 post.delete.html로 찾아가게 되고 이 파일이 없으면 오류가 발생 그러니까 post로 보내줘야함 post는 url 불포함 바디에 포함이니까 템플릿이 없어도 오류가 나지 않음!!!!!  -->
-    <p>내용 : {{ post.content }}</p>
-    <p>작성일 : {{ post.created_at }}</p>
-    <!-- 왜 a태그로 작성했을까? 수정페이지 자체는 get으로 들어가도 되기 때문에 -->
+    {% endif %}
 
-    <!-- 댓글 작성 화면 -->
+    <p>내용: {{ post_content }}</p>
+    <p>작성자: {{ post_writer }}</p>
+    <p>작성일: {{ post_created_at }}</p>
+    <hr>
+
+    <!-- 작성 화면 -->
     <h3>댓글</h3>
-    <form action="{% url 'blog:cm-write' pk=post.pk %}" method="post">
-        <!-- 여기서 pk=post.pk는 detailview에서 post_id를 써야하기 때문에  -->
+    <form action="{% url 'blog:cm-write' pk=post_id %}" method="post">
         {% csrf_token %}
-        {{ comment_form.content }}
-        <!-- DetailView의 commnet_form.content의 (빈)폼을 만들어줌  -->
+        {% if comment_form.errors %}
+            {% with form=comment_form %}
+                {% include 'blog/form_error.html' %}
+            {% endwith %}
+        {% else %}
+            {{ comment_form.content }}
+        {% endif %}
         <input type="submit" value="댓글 작성">
     </form>
     <br>
@@ -31,43 +39,50 @@
             {% for comment in comments %}
             <!-- 내용, 작성시간, 삭제 버튼 -->
                 <li>{{ comment.content }} / {{ comment.created_at }}
-                    <form action="{% url 'blog:cm-delete' pk=comment.pk %}" method="post">
-                        {% csrf_token %}
-                        <input type="submit" value="삭제" class="btn btn-outline-success"></li>
-                    </form>
+                    {% if comment.writer == request.user %}
+                        <form action="{% url 'blog:cm-delete' pk=comment.pk %}" method="post">
+                            {% csrf_token %}
+                            <input type="submit" value="X" class='btn'>
+                        </form>
+                    {% endif %}
+                </li>
             {% endfor %}
         </ul>
-    {% else %} 
+    {% else %}
         <p>댓글이 없습니다.</p>
     {% endif %}
     <hr>
+    <!-- 태그작성 화면 -->
+    <h3>해시태그</h3>
+    <form action="{% url 'blog:tag-write' pk=post_id %}" method="post">
+        {% csrf_token %}
+        {% if hashtag_form.errors %}
+            {% with form=hashtag_form %}
+                {% include 'blog/form_error.html' %}
+            {% endwith %}
+        {% else %}
+            {{ hashtag_form.name }}
+        {% endif %}
+        <input type="submit" value="태그 작성">
+    </form>
+    {% if hashtags %}
+    <ul>
+        {% for hashtag in hashtags %}
+        <li>
+            {{ hashtag }}
+            {% if hashtag.writer == request.user %}
+                <form action="{% url 'blog:tag-delete' pk=hashtag.pk %}" method="post">
+                    {% csrf_token %}
+                    <input type="submit" value="X" class='btn'>
+                </form>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <br>
+    <p>해시태그가 없습니다.</p>
+    {% endif %}
 
-<!-- 태그 작성 화면 -->
-<h3>해시태그</h3>
-<form action="{% url 'blog:tag-write' pk=post.pk %}" method="post">
-    {% csrf_token %}
-    {{ hashtag_form.name }}
-    <!-- (생성함수)해시태그를 보여주는 함수  -->
-    <input type="submit" value="태그 작성">
-</form>
-<br>
-<!-- views.py에 context 확인 그래야 여기에 뜨니까 -->
-{% if hashtags %}
-<!-- hashtags는 views.py 안 detail.view의 context 안 hashtags -->
-<ul>
-    {% for hashtag in hashtags %}
-    <li>
-        {{ hashtag.name }}
-        <!-- 여기서 hashtag.name은 순회도는 i -> hashtag이다.  model에서 str 매직 메서드를 줬기 때문에 'hashtag.name'을 하지 않고 'hashtag'만 해도 hashtag가 나열된다. -->
-        <form action="{% url 'blog:tag-delete' pk=hashtag.pk %}" method="post">
-            <!-- 지울땐 hashtag.pk만 가져와야한다! 태그 작성할땐  post.pk -->
-            {% csrf_token %}
-            <input type="submit" value="태그 삭제" class="btn btn-outline-success">
-        </form>
-    </li>
-    {% endfor %}
-</ul>
-{% else %}
-    <p>등록된 해시태그가 없습니다.</p>
-{% endif %}
+
 {% endblock %}
