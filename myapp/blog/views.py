@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy, reverse
 from django.http import HttpResponse
 from django.views import View
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
@@ -6,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from .models import Post, Comment, HashTag
 from .forms import PostForm, CommentForm, HashTagForm
-from django.urls import reverse_lazy, reverse
 
 # # Create your views here.
 # def index(request):
@@ -126,7 +126,7 @@ class Write(LoginRequiredMixin,View):
             # post.writer 컬럼에 request.user값을 넣어주는 것 
             post.save()
             return redirect('blog:list') # response -> HttpResponse객체
-        form.add_error(None,'폼이 유효하지 않습니다.')
+        # form.add_error(None,'폼이 유효하지 않습니다.')
         # 폼이 유효하지 않으면 에러 추가
         context = {
             'form': form
@@ -305,14 +305,14 @@ class DetailView(View):
         context = {
             'title': "Blog",
             'post_id' : pk,
-            'post_title' : post.title,
-            'post_content': post.content,
-            'post_writer': post.writer,
-            'post_created_at': post.created_at,
-            'comments' : comments,
-            'hashtags' : hashtags,
-            'comment_form' : comment_form,
-            'hashtag_form' : hashtag_form,
+            # 'post_title' : post.title,
+            # 'post_content': post.content,
+            # 'post_writer': post.writer,
+            # 'post_created_at': post.created_at,
+            # 'comments' : comments,
+            # 'hashtags' : hashtags,
+            # 'comment_form' : comment_form,
+            # 'hashtag_form' : hashtag_form,
         }
         
         return render(request, 'blog/post_detail.html', context)
@@ -320,7 +320,7 @@ class DetailView(View):
 
 
 ### Comment
-class CommentWrite(View):
+class CommentWrite(LoginRequiredMixin, View):
     # comment는 post_detail에 보여줄거기 때문에 get은 없애도됨
     # def get(self, request):
     #     pass
@@ -418,7 +418,7 @@ class CommentDelete(View):
     
     
 ### Tag
-class HashTagWrite(View):
+class HashTagWrite(LoginRequiredMixin, View):
     def post(self, request, pk): # post_id
         form = HashTagForm(request.POST)
         # 해당 아이디에 해당 글을 불러옴

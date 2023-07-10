@@ -77,7 +77,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'app.wsgi.application'
 
 
-## REST Framework
+# REST Framework
 REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_CLASS': {
         'rest_framework.throttling.AnonRateThrottle',
@@ -121,7 +121,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # SESSION
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-SESSION_COOKIE_AGE = 86400 # 24h * 60m * 60 -> client(browser) # 브라우저에 얼마나 유지시켜줄 수 있는지
+SESSION_COOKIE_AGE = 86400   # 24h * 60m * 60 -> client(browser)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # server session -> client session_id
@@ -141,8 +141,8 @@ USE_I18N = True
 USE_TZ = True
 
 LANGUAGES = [
-    ('kr', 'Korean'),
-    ('en', 'English')
+    ('en', 'English'),
+    ('kr', 'Korean')
 ]
 
 

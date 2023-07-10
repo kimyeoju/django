@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% static 'blog/style.css' %}
 
 {% block content %}
     <p>블로그 게시판 첫 화면입니다.</p>
@@ -15,7 +16,7 @@
     <!-- 글이 있을 때 : 테이블 출력-->
     {% if posts %}
     <!-- posts views.py에서 context_object_name 선언 -->
-        <table class="table-bordered">
+        <table class="table table-bordered">
             <thead class="table-light">
                 <tr>
                     <td>제목</td>

@@ -70,7 +70,7 @@ class Login(View):
                 return redirect('blog:list')
             
             # if문이 유효하지 않다면(False)라면?
-            form.add_error(None, '아이디가 없습니다.')
+            # form.add_error(None, '아이디가 없습니다.')
             # 폼 안에 기본적인 함수 add_error
             
         context = {

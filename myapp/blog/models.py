@@ -17,8 +17,8 @@ class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE)
     # 위의 Post를 연결하는 관계 데이터베이스 on_delete를 하면 Post에 있는 글이 사라지면 post 안에 있는 comment도 사라진다. Post:Comment --> '1:N의 관계'표현 
     content = models.TextField()
-    # writer을 post로 접근해서 포렌키를 하면 모든 유저들이 comment를 달 수 있기 때문에 아예 User로 접근
     writer = models.ForeignKey(User, on_delete=models.CASCADE)
+    # writer을 post로 접근해서 포렌키를 하면 모든 유저들이 comment를 달 수 있기 때문에 아예 User로 접근
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
