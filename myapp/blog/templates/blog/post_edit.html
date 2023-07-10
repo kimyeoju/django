@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 <!-- 사용자가 수정을 해야하기 때문에 form을 열어준다 -->
 <!-- 수정 form -->
@@ -7,6 +8,7 @@
 {% if form.errors %}
     {% include 'blog/form_error.html' %}
 {% else %}
+    {% trans 'Welcome!' %}
     <form action="{% url 'blog:edit' pk=post.pk %}" method="post">
         {% csrf_token %}
         {{ form.as_p }}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h2>로그인 페이지</h2>
+<form action="{% url 'user:login' %}" method="post">
+    {% csrf_token %}
+    <!-- 한 줄에 표현하고 싶어서 form을 p태그로 보여줌 -->
+    {{ form.as_p }}
+    <input type="submit" value="로그인">
+</form>
+
+{% endblock %}

@@ -265,10 +265,12 @@ class DetailView(View):
         # post에 해당하는 해시태그를 models.py에서 불러옴 
         
         # 댓글
+        # Object.objects.select_related('참조 관계를 갖는 필드명')
+        # comments = Comment.objects.select_related('post').filter(post__pk=pk) #-> comments[0]
+        # hashtags = HashTag.objects.select_related('post').filter(post__pk=pk)
         # commets는 복수니까 filter을 써야 복수로 값을 가지고 온다
         # comments = Comment.objects.select_related('writer').filter(post=post)
         # comments = Comment.objects.select_related('writer').filter(post__pk=pk)
-        comments = Comment.objects.select_related('post') #-> comments[0]
         # post가 comment를 참조할 수 있으니까 이렇게도 써도 된다
         # comment = Comment.objects.select_related('post').first()
         # post안의 pk값 숫자로도 값을 찾아 올 수 있다
@@ -276,11 +278,22 @@ class DetailView(View):
         # 해시태그
         # hashtags = HashTag.objects.select_related('writer').filter(post=post)
         # hashtags = HashTag.objects.select_related('writer').filter(post__pk=pk)
-        hashtags = HashTag.objects.select_related('post')
         # print(comments)
         # <QuerySet[]>
         # value.attr
         # print(hashtags)
+        
+        # 글
+        # Object.objects.prefetch_related('역참조필드_set').get(조건)
+        post = Post.objects.prefetch_related('comment_set', 'hashtag_set').get(pk=pk)
+        # post는 post 자신이니까 pk=pk라고 표기
+        
+        comments = post.comment_set.all()
+        hashtags = post.hashtag_set.all()
+        
+        print(comments)
+        print(hashtags)
+        print(post)
         
         # 댓글 Form
         comment_form = CommentForm()
@@ -292,10 +305,10 @@ class DetailView(View):
         context = {
             'title': "Blog",
             'post_id' : pk,
-            'post_title' : comments[0].post.title,
-            'post_content': comments[0].post.content,
-            'post_writer': comments[0].post.writer,
-            'post_created_at': comments[0].post.created_at,
+            'post_title' : post.title,
+            'post_content': post.content,
+            'post_writer': post.writer,
+            'post_created_at': post.created_at,
             'comments' : comments,
             'hashtags' : hashtags,
             'comment_form' : comment_form,

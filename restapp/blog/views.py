@@ -30,6 +30,34 @@ class Write(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class Update(APIView):
+    def get(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        serializer = PostSerializer(post)
+        # 보내는 직렬화?
+        return Response(serializer.data)
+        # 직렬화 된 포스트를 돌려주는구나
+        # 여기선 get을 하는 이유? 전의 수정하기 전 값을 되돌려줘야함 위의 글 작성에선 get을 쓰지 않는 이유는 화면 form만 보여줘야하니까 데이터를 굳이 보내주지 않아도됨
+    
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class Delete(APIView):
+    def post(self, request, pk):
+        post = Post.objects.get(pk=pk)
+        # serializer = PostSerializer(post)
+        # if serializer.is_valid():
+        post.delete()
+        return Response({'message': 'Post deleted'}, status=status.HTTP_204_NO_CONTENT)
+
+
+## Comment
 class CommentWrite(APIView):
     def post(self,request, pk):
         serializer = CommentSerializer(data=request.data)
@@ -38,6 +66,16 @@ class CommentWrite(APIView):
             comment.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+
+
+class CommentDelete(APIView):
+    def post(self,request,pk):
+        comment = Comment.objects.get(pk=pk)
+        comment.delete()
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
 
 class HashTagWrite(APIView):
     def post(self,request, pk):
@@ -48,8 +86,12 @@ class HashTagWrite(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class Update(APIView):
-    def get(self,request):
-        pass
-    def post(self, request):
-        pass
+
+class HashTagDelete(APIView):
+    def post(self,request,pk):
+        hashtag = HashTag.objects.get(pk=pk)
+        hashtag.delete()
+        serializer = HashTagSerializer(hashtag)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        
+        

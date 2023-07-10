@@ -79,3 +79,9 @@ class User(AbstractUser):
     #     return self.name
     # 클래스 user 객체 생성되었을 때 admin에서 이름으로 보여지는게 편할 것 같아서 설정
     # 그래서 admin에 들어가보면 사용자 'aaa' 이렇게 name으로 들어가있다
+
+class Profile(models.Model):
+    user = models.OneToOneField('User', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='user/media')
+    age = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)

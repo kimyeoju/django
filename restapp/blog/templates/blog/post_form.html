@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <p>블로그 글 작성 화면</p>
+    <!-- 제목 -->
+    <!-- 내용 -->
+    <!-- form action이 실행이 되는 것은 view의 writer경로를 타게됨 // form(submit버튼)이 실행되면 url blog:write로 요청을 하게 됨--> 
+    <form action="{% url 'blog:write' %}" method="post">
+        {% csrf_token %}
+        <!-- views.py Write 클래스에 보내준 form을 이용 -->
+        <!-- p형태로 form을 불러오겠다 -->
+        {{ form.as_p }}
+        <!-- PostForm의 객체 폼의 정의한 title, content속성에 해당하는 html코드를 자동으로 생성 -->
+        <input type="submit" value="작성" class="btn btn-outline-success">
+    </form>
+{% endblock %}
