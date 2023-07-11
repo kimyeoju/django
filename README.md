@@ -1,2 +1,2 @@
 # django
-Django 웹 구현
+ - Django 웹 구현
