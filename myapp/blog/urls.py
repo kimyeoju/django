@@ -41,5 +41,5 @@ urlpatterns = [
     path("detail/<int:pk>/hashtag/write/", views.HashTagWrite.as_view(), name='tag-write'),
     
     # 태그 삭제
-    path("detail/hashtag/<int:pk>/delete/", views.HashTagDelete.as_view(), name='tag-delete'),
+    path("detail/<int:pk>/hashtag/delete/", views.HashTagDelete.as_view(), name='tag-delete'),
 ]

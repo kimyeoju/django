@@ -1,12 +1,11 @@
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy, reverse
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
-from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from .models import Post, Comment, HashTag
 from .forms import PostForm, CommentForm, HashTagForm
+# from django.urls import reverse_lazy, reverse
+# from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 
 # # Create your views here.
 # def index(request):
@@ -117,6 +116,8 @@ class Write(LoginRequiredMixin,View):
     
     def post(self,request): # response -> HttpResponse객체
         form = PostForm(request.POST)
+        
+        
         if form.is_valid():
             post = form.save(commit=False)
             # 저장하긴 하는데 commit=False라고 넣어주면 뒤의 내용이 바뀔수도 있다라는 의미
@@ -131,7 +132,7 @@ class Write(LoginRequiredMixin,View):
         context = {
             'form': form
         }
-        return render(request,'blog/post_form.html')
+        return render(request,'blog/post_form.html', context)
     
     
 # *class detail*
@@ -180,41 +181,32 @@ class Write(LoginRequiredMixin,View):
     
     
 class Update(View):
-    def get(self,request,pk): # post_id
-        ## try, except
-        try:
-            post = Post.objects.get(pk=pk) # <Object : post>
-        # get()은 해당 조건이 없을 때 오류를 발생시킨다.
-        except ObjectDoesNotExist as e:
-            print('Post does not exist.', str(e))
-        form = PostForm(initial={'title':post.title,'content':post.content})
+    
+    def get(self, request, pk):
+        post = get_object_or_404(Post, pk=pk)
+        form = PostForm(initial={'title': post.title, 'content': post.content})
         context = {
             'form': form,
             'post': post,
-            'title': "Blog"
-            # post를 같이 넘겨주어야 주소를 정확히 넘겨줄 수 있었다.
+            "title": "Blog"
         }
-        return render(request, 'blog/post_edit.html',context)
+        return render(request, 'blog/post_edit.html', context)
     
     def post(self, request, pk):
-        ## try, except
-        try:
-            post = Post.objects.get(pk=pk)
-        except ObjectDoesNotExist as e:
-            print('Post does not exist.', str(e))
-        
+        post = get_object_or_404(Post, pk=pk)
         form = PostForm(request.POST)
+        
         if form.is_valid():
             post.title = form.cleaned_data['title']
             post.content = form.cleaned_data['content']
             post.save()
-            return redirect('blog:detail', pk=pk) #post_id
+            return redirect('blog:detail', pk=pk)
         
-        # form.add_error('폼이 유효하지 않습니다.')
         context = {
             'form': form,
-            'title': "Blog"
+            "title": "Blog"
         }
+        
         return render(request, 'blog/post_edit.html', context)
     
     
@@ -226,13 +218,9 @@ class Update(View):
 
 
 class Delete(View):
+    
     def post(self, request, pk): # pk = post_id
-        ## try, except
-        try:
-            post = Post.objects.get(pk=pk)
-        except ObjectDoesNotExist as e:
-            print('Post does not exist.', str(e))
-        
+        post = get_object_or_404(Post,pk=pk)
         post.delete() # post.save() 저장을 할 것이 없으니까 저장 할 필요가 없다.
         return redirect('blog:list')
     
@@ -291,9 +279,9 @@ class DetailView(View):
         comments = post.comment_set.all()
         hashtags = post.hashtag_set.all()
         
-        print(comments)
-        print(hashtags)
-        print(post)
+        # print(comments)
+        # print(hashtags)
+        # print(post)
         
         # 댓글 Form
         comment_form = CommentForm()
@@ -304,15 +292,15 @@ class DetailView(View):
         
         context = {
             'title': "Blog",
-            'post_id' : pk,
-            # 'post_title' : post.title,
-            # 'post_content': post.content,
-            # 'post_writer': post.writer,
-            # 'post_created_at': post.created_at,
-            # 'comments' : comments,
-            # 'hashtags' : hashtags,
-            # 'comment_form' : comment_form,
-            # 'hashtag_form' : hashtag_form,
+            'post_id': pk,
+            'post_title': post.title,
+            'post_writer' : post.writer,
+            'post_content': post.content,
+            'post_created_at': post.created_at,
+            'comments': comments,
+            'hashtags': hashtags,
+            'comment_form': comment_form,
+            'hashtag_form': hashtag_form,
         }
         
         return render(request, 'blog/post_detail.html', context)
@@ -332,14 +320,7 @@ class CommentWrite(LoginRequiredMixin, View):
         # 사용자에게 받은 post요청을 form에 넣음
         form = CommentForm(request.POST)
         # 해당 아이디에 해당하는 글 불러옴
-        ## try, except
-        try:
-            post = Post.objects.get(pk=pk) # <Object: post>
-        # get()은 해당 조건이 없을 때 오류를 발생시킨다. 
-        except ObjectDoesNotExist as e:
-            print('Post does not exist.', str(e))
-        # get 관련 쿼리들은 해당 데이터가 없을 때 오류 발생
-        # get_or_404
+        post = get_object_or_404(Post, pk=pk)
         
         if form.is_valid():
             # form에 있는 특정 값을 가져오고 싶을 때 cleaned_data 사용하면된다.
@@ -399,11 +380,7 @@ class CommentWrite(LoginRequiredMixin, View):
 class CommentDelete(View):
     def post(self, request, pk): # comment_id
         # 지울 객체를 찾아야 한다. -> 댓글 객체(comment)
-        ## try, except
-        try:
-            comment = Comment.objects.get(pk=pk)
-        except ObjectDoesNotExist as e:
-            print('Comment does not exist', str(e))
+        comment = get_object_or_404(Comment, pk=pk)
         # post요청시 {% url 'blog:cm-delete' pk=comment.pk %} url에 정해준 값이 comment의 pk값이고, 위에 코드는 해당 pk값을 가지고 있는 comment를 디비에서 불러오는 과정
         # commet의 지울 객체를 찾아야 해서 사용한 코드
         # 해당 pk값을 가지고 있는 comment를 데이터베이스에서 불러오는 것
@@ -422,11 +399,7 @@ class HashTagWrite(LoginRequiredMixin, View):
     def post(self, request, pk): # post_id
         form = HashTagForm(request.POST)
         # 해당 아이디에 해당 글을 불러옴
-        ## try, except
-        try:
-            comment = Comment.objects.get(pk=pk)
-        except ObjectDoesNotExist as e:
-            print('Comment does not exist.', str(e))
+        post = get_object_or_404(Post, pk=pk)
         
         if form.is_valid(): 
             #사용자에게 태그 내용을 받아옴
@@ -466,12 +439,7 @@ class HashTagDelete(View):
     def post(self, request, pk): # hashtag_id
         # 해시태그 불러오기
         # 지울 객체를 찾아야 한다. -> 태그 객체
-        try:
-            hashtag = HashTag.objects.get(pk=pk)
-            # 단수로 적어야함 1개니까 
-            
-        except ObjectDoesNotExist as e:
-            print('HashTag does not exist.',str(e))
+        hashtag = get_object_or_404(HashTag, pk=pk)
         
         # 상세 페이지로 돌아가기
         post_id = hashtag.post.id

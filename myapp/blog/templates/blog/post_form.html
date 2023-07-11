@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
 {% block content %}
     <p>블로그 글 작성 화면</p>
@@ -11,6 +12,6 @@
         <!-- p형태로 form을 불러오겠다 -->
         {{ form.as_p }}
         <!-- PostForm의 객체 폼의 정의한 title, content속성에 해당하는 html코드를 자동으로 생성 -->
-        <input type="submit" value="작성" class="btn btn-outline-success">
+        <input type="submit" value="{% trans 'Submit' %}" class="btn btn-outline-success">
     </form>
 {% endblock %}
